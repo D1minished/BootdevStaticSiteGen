@@ -1,4 +1,4 @@
-from textnode import TextType
+from textnode import *
 
 class HTMLNode():
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -62,3 +62,33 @@ class ParentNode(HTMLNode):
             html_string += child.to_html()
         html_string += f"</{self.tag}>"
         return html_string
+
+def text_node_to_html_node(text_node):
+    if text_node.text_type not in TextType:
+        raise Exception("Text node not a supported type")
+    
+    match text_node.text_type:
+        case TextType.TEXT:
+            html_node = LeafNode(None, value=text_node.text)
+            return html_node
+        
+        case TextType.ITALIC:
+            html_node = LeafNode("i", value=text_node.text)
+            return html_node
+            
+        case TextType.BOLD:
+            html_node = LeafNode("b", value=text_node.text)
+            return html_node
+            
+        case TextType.CODE:
+            html_node = LeafNode("code", value=text_node.text)
+            return html_node
+            
+        case TextType.LINK:
+            html_node = LeafNode("a", value=text_node.text, props={"href": f"{text_node.url}"})
+            return html_node
+            
+        case TextType.IMAGE:
+            html_node = LeafNode("img", value=text_node.text, props={"src": f"{text_node.url}"})
+            return html_node
+        
