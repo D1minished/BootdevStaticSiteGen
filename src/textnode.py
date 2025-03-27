@@ -1,4 +1,5 @@
 from enum import Enum
+import re
 from htmlnode import *
 
 class TextType(Enum):
