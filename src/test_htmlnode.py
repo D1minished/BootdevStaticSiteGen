@@ -92,3 +92,5 @@ class testHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "img")
         self.assertEqual(html_node.value, "This is an image node")
         self.assertEqual(html_node.props, {"src": "https://www.google.com"})
+    
+    

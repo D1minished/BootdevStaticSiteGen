@@ -1,4 +1,5 @@
 from textnode import *
+import re
 
 class HTMLNode():
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -91,4 +92,4 @@ def text_node_to_html_node(text_node):
         case TextType.IMAGE:
             html_node = LeafNode("img", value=text_node.text, props={"src": f"{text_node.url}"})
             return html_node
-        
+
