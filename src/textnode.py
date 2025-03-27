@@ -27,7 +27,24 @@ class TextNode():
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
     
 def text_to_textnodes(text):
-    pass
+    text_node = TextNode(text, TextType.TEXT)
+    bold_found = split_nodes_delimiter([text_node], "**", TextType.BOLD)
+    code_found = split_nodes_delimiter(bold_found, "`", TextType.CODE)
+    italic_found = split_nodes_delimiter(code_found, "_", TextType.ITALIC)
+    new_nodes = []
+    for node in italic_found:
+        if node.text_type == TextType.TEXT:
+            new_nodes.extend(split_nodes_image([node]))
+        else:
+            new_nodes.append(node)
+    final_nodes = []
+    for node in new_nodes:
+        if node.text_type == TextType.TEXT:
+            final_nodes.extend(split_nodes_link([node]))
+        else:
+            final_nodes.append(node)
+    return final_nodes
+        
     
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
