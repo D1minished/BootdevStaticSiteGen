@@ -1,4 +1,5 @@
 from textnode import *
+from blocknodes import *
 import re
 
 class HTMLNode():
@@ -93,3 +94,49 @@ def text_node_to_html_node(text_node):
             html_node = LeafNode("img", value=text_node.text, props={"src": f"{text_node.url}"})
             return html_node
 
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    top_parent = ParentNode(tag="div", children=[])
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.CODE:
+            top_parent.children.append(code_to_child(block))
+            continue
+        print(block)
+        block_parent = block_to_html_node(block_type)
+        children = text_to_children(block)
+        block_parent.children = children
+        top_parent.children.append(block_parent)
+    return top_parent
+    
+def code_to_child(text):
+    text_node = TextNode(text, TextType.CODE)
+    pre_node = ParentNode(tag="pre", children=text_node)
+    return pre_node
+        
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    html_nodes = []
+    print(text)
+    for node in text_nodes:
+        print(f"----------------------\n{node.text}\n------------------------------")
+        html_nodes.append(text_node_to_html_node(node))
+    return html_nodes
+    
+
+def block_to_html_node(block_type):
+    match block_type:
+        case BlockType.PARAGRAPH:
+            return ParentNode(tag="p", children=[])
+        case BlockType.QUOTE:
+            return ParentNode(tag="blockquote", children=[])
+        case BlockType.CODE:
+            return ParentNode(tag="code", children=[])
+        case BlockType.UNORDERED_LIST:
+            return ParentNode(tag="ul", children=[])
+        case BlockType.ORDERED_LIST:
+            return ParentNode(tag="ol", children=[])
+        case BlockType.HEADING:
+            heading_start = re.match(r"(\*{1,6})")
+            heading_tag = f"h{len(heading_start)}"
+            return ParentNode(tag=heading_tag, children=[])
